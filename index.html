@@ -3,7 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TaskMaster Pro - User & Admin Portal</title>
+    <title>TaskMaster Pro - Real OTP</title>
+    
+    <!-- EMAILJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+       // TODO: PASTE YOUR PUBLIC KEY HERE FROM EMAILJS.COM
+       (function(){
+          emailjs.init("service_g5327jo"); 
+       })();
+    </script>
+
     <style>
         :root {
             /* Spotify-like Palette for Admin */
@@ -24,20 +34,16 @@
             --text-main: #1f2937;
         }
 
-        /* --- SMOOTH SCROLL SETTINGS --- */
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            -webkit-overflow-scrolling: touch; /* Enables smooth momentum scrolling on iOS */
-        }
+        /* --- SMOOTH SCROLL --- */
+        html { scroll-behavior: smooth; }
+        body { -webkit-overflow-scrolling: touch; }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* Native font stack for iOS/Android */
-            -webkit-tap-highlight-color: transparent; /* Removes tap highlight on mobile */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -67,7 +73,7 @@
         .btn {
             padding: 12px 20px;
             border: none;
-            border-radius: 8px; /* Slightly more square for modern mobile look */
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.2s;
@@ -78,41 +84,29 @@
         .btn-primary {
             background-color: var(--primary-color);
             color: white;
-            width: 100%; /* Full width buttons for easier tapping on mobile */
+            width: 100%;
         }
-        .btn-primary:active { background-color: var(--primary-hover); transform: scale(0.98); }
+        .btn-primary:active { transform: scale(0.98); }
         
         .btn-green {
             background-color: var(--spotify-green);
             color: white;
             width: 100%;
         }
-        .btn-green:active { background-color: var(--spotify-green-hover); transform: scale(0.98); }
+        .btn-green:active { transform: scale(0.98); }
 
-        .btn-danger {
-            background-color: var(--error);
-            color: white;
-        }
-        .btn-secondary {
-            background-color: #e5e7eb;
-            color: var(--text-main);
-            width: 100%;
-        }
-        .btn-disabled {
-            background-color: #d1d5db;
-            color: #9ca3af;
-            cursor: not-allowed;
-            width: 100%;
-        }
+        .btn-danger { background-color: var(--error); color: white; }
+        .btn-secondary { background-color: #e5e7eb; color: var(--text-main); width: 100%; }
+        .btn-disabled { background-color: #d1d5db; color: #9ca3af; cursor: not-allowed; width: 100%; }
 
         /* Inputs */
         input, select, textarea {
             width: 100%;
-            padding: 14px; /* Larger padding for touch targets */
+            padding: 14px;
             border: 1px solid #d1d5db;
             border-radius: 8px;
             margin-bottom: 12px;
-            font-size: 16px; /* Prevents zoom on iOS input focus */
+            font-size: 16px; /* Prevents zoom on iOS */
             background: #fff;
         }
         input:focus {
@@ -127,7 +121,7 @@
             top: 20px;
             right: 20px;
             z-index: 9999;
-            pointer-events: none; /* Allows clicks to pass through */
+            pointer-events: none;
         }
         .toast {
             background: rgba(30, 30, 30, 0.95);
@@ -199,10 +193,10 @@
             backdrop-filter: blur(10px);
             display: flex;
             justify-content: space-around;
-            padding: 8px 0 20px 0; /* Extra padding for iOS home indicator */
+            padding: 8px 0 20px 0;
             border-top: 1px solid #e5e7eb;
             z-index: 99;
-            padding-bottom: max(8px, env(safe-area-inset-bottom)); /* Safe area for iPhone X+ */
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
         }
         .nav-item {
             text-align: center;
@@ -220,7 +214,7 @@
         .nav-item.active { color: var(--primary-color); font-weight: 700; }
         .nav-icon { display: block; font-size: 1.4rem; margin-bottom: 2px; }
 
-        /* Task List - Updated for separate buttons */
+        /* Task List */
         .task-item {
             background: white;
             margin: 1rem;
@@ -232,12 +226,10 @@
         }
         .task-item:active { transform: scale(0.99); }
         .task-img { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; }
-        
         .task-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
         .task-title { font-size: 1.1rem; font-weight: 700; color: #111; }
         .task-reward { color: #059669; font-weight: 700; background: #ecfdf5; padding: 4px 8px; border-radius: 6px; font-size: 0.9rem; }
         .task-desc { color: #6b7280; font-size: 0.9rem; margin-bottom: 15px; line-height: 1.4; }
-
         .task-actions { display: flex; gap: 10px; }
         
         /* Withdraw Section */
@@ -298,9 +290,7 @@
             border-radius: 8px;
             transition: background-color 0.3s ease;
         }
-        .spotify-card:hover {
-            background-color: var(--spotify-light-grey);
-        }
+        .spotify-card:hover { background-color: var(--spotify-light-grey); }
         .spotify-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -343,28 +333,35 @@
 
     <!-- ================== AUTHENTICATION VIEWS ================== -->
     <div id="view-auth" class="">
+        <!-- Login Card -->
         <div id="login-card" class="auth-container">
-            <h2 class="auth-title text-center">Welcome Back</h2>
-            <p class="text-center mb-4 text-sm text-grey-500">Enter your mobile number to continue</p>
+            <h2 class="auth-title text-center">Create Account</h2>
+            <p class="text-center mb-4 text-sm text-grey-500">Enter details to receive OTP</p>
             <form id="login-form">
+                
+                <label class="text-sm font-bold" style="display:block; margin-bottom:5px;">Email Address</label>
+                <input type="email" id="login-email" placeholder="name@example.com" required>
+                
                 <label class="text-sm font-bold" style="display:block; margin-bottom:5px;">Mobile Number</label>
                 <input type="tel" id="login-mobile" placeholder="e.g. 9876543210" required pattern="[0-9]{10}" inputmode="numeric">
-                <button type="submit" class="btn btn-primary">Get OTP</button>
+
+                <button type="submit" class="btn btn-primary">Send OTP</button>
             </form>
             <div class="mt-4 text-center">
                 <a href="#" onclick="app.showAdminLogin()" class="text-sm" style="color: #6b7280;">Admin Login</a>
             </div>
         </div>
 
+        <!-- OTP Card -->
         <div id="otp-card" class="auth-container hidden">
             <h2 class="auth-title text-center">Verify OTP</h2>
-            <p class="text-center mb-4 text-sm">Enter the code sent to <span id="otp-mobile-display" style="font-weight:bold;"></span></p>
+            <p class="text-center mb-4 text-sm">Check your email (or Console) for code</p>
             <form id="otp-form">
                 <label class="text-sm font-bold">One Time Password</label>
-                <input type="tel" id="login-otp" placeholder="Try: 1234" required maxlength="4" inputmode="numeric" style="text-align: center; letter-spacing: 5px; font-size: 1.5rem;">
+                <input type="tel" id="login-otp" placeholder="Enter Code" required maxlength="4" inputmode="numeric" style="text-align: center; letter-spacing: 5px; font-size: 1.5rem;">
                 <button type="submit" class="btn btn-primary">Verify & Continue</button>
             </form>
-            <button onclick="app.resetLogin()" class="btn btn-secondary mt-4">Change Number</button>
+            <button onclick="app.resetLogin()" class="btn btn-secondary mt-4">Back</button>
         </div>
 
         <div id="admin-login-card" class="auth-container hidden">
@@ -405,7 +402,6 @@
                 <div class="p-4">
                     <h3 style="margin-bottom: 10px; font-weight: 700;">Notifications</h3>
                     <div id="user-notifications-list" style="background: white; border-radius: 12px; padding: 10px;">
-                        <!-- Notifications JS -->
                         <p class="text-sm text-grey-500">No new notifications.</p>
                     </div>
                 </div>
@@ -431,16 +427,12 @@
                 </div>
 
                 <h3 class="p-4 font-bold">Transaction History</h3>
-                <div id="user-withdraw-history" class="p-4">
-                    <!-- History -->
-                </div>
+                <div id="user-withdraw-history" class="p-4"></div>
             </section>
 
             <section id="user-task" class="user-section hidden">
                 <h2 class="p-4 font-bold">Daily Tasks</h2>
-                <div id="task-list-container">
-                    <!-- Tasks JS -->
-                </div>
+                <div id="task-list-container"></div>
             </section>
 
             <section id="user-help" class="user-section hidden">
@@ -582,7 +574,10 @@
                 tasks: [],
                 withdrawals: [],
                 notifications: [],
-                submissions: []
+                submissions: [],
+                currentGeneratedOtp: null, // Store the OTP we just generated
+                tempMobile: null,
+                tempEmail: null
             },
 
             init: function() {
@@ -623,7 +618,7 @@
                 localStorage.setItem('tm_submissions', JSON.stringify(this.data.submissions));
             },
 
-            // --- AUTH ---
+            // --- AUTH (UPDATED FOR REAL OTP) ---
             showAdminLogin: function() {
                 document.getElementById('login-card').classList.add('hidden');
                 document.getElementById('admin-login-card').classList.remove('hidden');
@@ -633,39 +628,78 @@
                 document.getElementById('otp-card').classList.add('hidden');
                 document.getElementById('admin-login-card').classList.add('hidden');
             },
+            
             handleLogin: function(e) {
                 e.preventDefault();
+                const email = document.getElementById('login-email').value;
                 const mobile = document.getElementById('login-mobile').value;
-                if(mobile.length !== 10) return this.toast('Please enter a valid 10-digit number', 'error');
 
-                let user = this.data.users.find(u => u.mobile === mobile);
+                if(mobile.length !== 10) return this.toast('Please enter a valid 10-digit number', 'error');
+                if(!email) return this.toast('Please enter an email', 'error');
+
+                // 1. Generate Real Random OTP
+                this.data.currentGeneratedOtp = Math.floor(1000 + Math.random() * 9000);
+                this.data.tempMobile = mobile;
+                this.data.tempEmail = email;
+
+                console.log("DEV MODE: The generated OTP is:", this.data.currentGeneratedOtp);
+
+                // 2. Prepare EmailJS Data
+                const templateParams = {
+                    to_email: email,
+                    otp_code: this.data.currentGeneratedOtp,
+                    to_name: "User"
+                };
+
+                // TODO: REPLACE 'YOUR_SERVICE_ID' and 'YOUR_TEMPLATE_ID' HERE
+                const serviceID = "YOUR_SERVICE_ID";
+                const templateID = "YOUR_TEMPLATE_ID";
+
+                // 3. Send Email
+                emailjs.send(serviceID, templateID, templateParams)
+                    .then(() => {
+                        this.toast('OTP sent to your email!', 'success');
+                        document.getElementById('login-card').classList.add('hidden');
+                        document.getElementById('otp-card').classList.remove('hidden');
+                        document.getElementById('login-mobile').value = '';
+                        document.getElementById('login-email').value = '';
+                    })
+                    .catch((err) => {
+                        // Fallback for testing if keys aren't set yet
+                        this.toast('EmailJS not configured. OTP: ' + this.data.currentGeneratedOtp, 'success');
+                        document.getElementById('login-card').classList.add('hidden');
+                        document.getElementById('otp-card').classList.remove('hidden');
+                        console.error("EmailJS Error:", err);
+                    });
+            },
+            
+            handleOtp: function(e) {
+                e.preventDefault();
+                const otp = document.getElementById('login-otp').value;
+                
+                // Check against the REAL generated OTP
+                if (parseInt(otp) !== this.data.currentGeneratedOtp) {
+                    return this.toast('Invalid OTP', 'error');
+                }
+
+                // Find or Create User
+                let user = this.data.users.find(u => u.mobile === this.data.tempMobile);
                 if (!user) {
                     const newId = Math.floor(10000 + Math.random() * 90000);
-                    user = { id: newId, mobile: mobile, balance: 0, acceptedTasks: [] };
+                    user = { id: newId, mobile: this.data.tempMobile, balance: 0, acceptedTasks: [] };
                     this.data.users.push(user);
                     this.saveData();
                 }
 
-                document.getElementById('login-mobile').value = '';
-                document.getElementById('login-card').classList.add('hidden');
-                document.getElementById('otp-card').classList.remove('hidden');
-                document.getElementById('otp-mobile-display').innerText = mobile;
-                this.tempMobile = mobile;
-                this.toast('OTP Sent! (Try 1234)', 'success');
-            },
-            handleOtp: function(e) {
-                e.preventDefault();
-                const otp = document.getElementById('login-otp').value;
-                if (otp !== '1234') return this.toast('Incorrect OTP', 'error');
-
-                const user = this.data.users.find(u => u.mobile === this.tempMobile);
                 this.data.currentUser = user;
                 this.data.isAdmin = false;
+                this.data.currentGeneratedOtp = null; // Clear OTP
                 
                 this.renderUserDashboard();
                 this.switchView('view-user');
                 document.getElementById('otp-form').reset();
             },
+            
             handleAdminLogin: function(e) {
                 e.preventDefault();
                 const id = document.getElementById('admin-id').value;
@@ -693,7 +727,6 @@
                     document.getElementById(id).classList.add('hidden');
                 });
                 document.getElementById(viewId).classList.remove('hidden');
-                // Scroll to top when switching views
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
             navUser: function(tab) {
@@ -716,125 +749,6 @@
                 document.getElementById('user-id-display').innerText = user.id;
                 document.getElementById('user-balance').innerText = user.balance;
 
-                // Notifications
-                const notifList = document.getElementById('user-notifications-list');
-                notifList.innerHTML = '';
-                if(this.data.notifications.length === 0) {
-                    notifList.innerHTML = '<p class="text-sm text-grey-500 text-center">No new notifications.</p>';
-                } else {
-                    this.data.notifications.slice().reverse().forEach(n => {
-                        const div = document.createElement('div');
-                        div.className = 'p-2 border-b border-gray-100 text-sm';
-                        div.innerHTML = `<div class="font-bold text-xs text-gray-400">${n.date}</div><div>${n.msg}</div>`;
-                        notifList.appendChild(div);
-                    });
-                }
-
-                // Tasks
-                const taskContainer = document.getElementById('task-list-container');
-                taskContainer.innerHTML = '';
-                this.data.tasks.forEach(task => {
-                    // Check if user has already submitted this task (checking submissions history)
-                    const isSubmitted = this.data.submissions.some(s => s.userId === user.id && s.taskId === task.id && s.status === 'Approved');
-                    
-                    // Check if user has accepted but not submitted (checking user acceptedTasks array)
-                    const isAccepted = user.acceptedTasks && user.acceptedTasks.includes(task.id);
-
-                    let buttonHtml = '';
-                    if (isSubmitted) {
-                        buttonHtml = `<button class="btn btn-disabled" disabled>Completed</button>`;
-                    } else if (isAccepted) {
-                        // Show Submit Button
-                        buttonHtml = `<button onclick="app.submitTask(${task.id})" class="btn btn-green">Submit Proof</button>`;
-                    } else {
-                        // Show Accept Button
-                        buttonHtml = `<button onclick="app.acceptTask(${task.id})" class="btn btn-primary">Accept Task</button>`;
-                    }
-
-                    const el = document.createElement('div');
-                    el.className = 'task-item';
-                    el.innerHTML = `
-                        <img src="${task.image}" class="task-img" alt="Task" loading="lazy">
-                        <div class="task-header">
-                            <span class="task-title">${task.title}</span>
-                            <span class="task-reward">+₹${task.reward}</span>
-                        </div>
-                        <p class="task-desc">${task.desc}</p>
-                        <div class="task-actions">
-                            ${buttonHtml}
-                        </div>
-                    `;
-                    taskContainer.appendChild(el);
-                });
-
-                this.renderWithdrawHistory();
-            },
-
-            // SEPARATE ACCEPT FUNCTION
-            acceptTask: function(taskId) {
-                const user = this.data.currentUser;
-                if (!user.acceptedTasks) user.acceptedTasks = [];
-                
-                user.acceptedTasks.push(taskId);
-                this.saveData();
-                
-                // Re-render specifically or whole dashboard. 
-                // Re-rendering whole dashboard is simpler for this state logic.
-                this.renderUserDashboard();
-                this.toast('Task Accepted! Please complete it and submit proof.', 'success');
-            },
-
-            // SEPARATE SUBMIT FUNCTION
-            submitTask: function(taskId) {
-                const task = this.data.tasks.find(t => t.id === taskId);
-                
-                // Trigger File Input
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.onchange = e => {
-                    if (e.target.files.length > 0) {
-                        const file = e.target.files[0];
-                        
-                        // 1. Create Submission
-                        const submission = {
-                            id: Date.now(),
-                            userId: this.data.currentUser.id,
-                            taskId: task.id,
-                            taskTitle: task.title,
-                            reward: task.reward,
-                            status: 'Pending',
-                            proof: file.name,
-                            date: new Date().toISOString()
-                        };
-                        this.data.submissions.push(submission);
-
-                        // 2. Remove from Accepted Tasks (since it's now submitted)
-                        const idx = this.data.currentUser.acceptedTasks.indexOf(taskId);
-                        if (idx > -1) {
-                            this.data.currentUser.acceptedTasks.splice(idx, 1);
-                        }
-
-                        this.saveData();
-                        this.renderUserDashboard(); // UI will now show "Completed" (or wait, let's keep it showing submitted status)
-                        // Currently render logic checks 'Approved'. If 'Pending', it might show accept again?
-                        // Let's update render logic to treat 'Pending' as 'Submitted' state to avoid re-submitting.
-                        // Correction: I will modify the render logic below to handle Pending.
-                        
-                        this.toast('Proof submitted! Waiting for admin review.', 'success');
-                    }
-                };
-                input.click();
-            },
-
-            // Override render slightly to show "Under Review" if Pending
-            renderUserDashboard: function() { 
-                // ... (Previous code copy) ...
-                const user = this.data.currentUser;
-                document.getElementById('nav-user-id').innerText = `ID: ${user.id}`;
-                document.getElementById('user-id-display').innerText = user.id;
-                document.getElementById('user-balance').innerText = user.balance;
-
                 const notifList = document.getElementById('user-notifications-list');
                 notifList.innerHTML = '';
                 if(this.data.notifications.length === 0) {
@@ -851,7 +765,6 @@
                 const taskContainer = document.getElementById('task-list-container');
                 taskContainer.innerHTML = '';
                 this.data.tasks.forEach(task => {
-                    // Check status
                     const submission = this.data.submissions.find(s => s.userId === user.id && s.taskId === task.id);
                     const isSubmitted = submission && (submission.status === 'Pending' || submission.status === 'Approved');
                     const isAccepted = user.acceptedTasks && user.acceptedTasks.includes(task.id);
@@ -888,16 +801,56 @@
                 this.renderWithdrawHistory();
             },
 
+            acceptTask: function(taskId) {
+                const user = this.data.currentUser;
+                if (!user.acceptedTasks) user.acceptedTasks = [];
+                user.acceptedTasks.push(taskId);
+                this.saveData();
+                this.renderUserDashboard();
+                this.toast('Task Accepted! Complete and submit proof.', 'success');
+            },
+
+            submitTask: function(taskId) {
+                const task = this.data.tasks.find(t => t.id === taskId);
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.onchange = e => {
+                    if (e.target.files.length > 0) {
+                        const file = e.target.files[0];
+                        const submission = {
+                            id: Date.now(),
+                            userId: this.data.currentUser.id,
+                            taskId: task.id,
+                            taskTitle: task.title,
+                            reward: task.reward,
+                            status: 'Pending',
+                            proof: file.name,
+                            date: new Date().toISOString()
+                        };
+                        this.data.submissions.push(submission);
+                        
+                        const idx = this.data.currentUser.acceptedTasks.indexOf(taskId);
+                        if (idx > -1) {
+                            this.data.currentUser.acceptedTasks.splice(idx, 1);
+                        }
+
+                        this.saveData();
+                        this.renderUserDashboard();
+                        this.toast('Proof submitted! Waiting for admin review.', 'success');
+                    }
+                };
+                input.click();
+            },
+
             renderWithdrawHistory: function() {
                 const histContainer = document.getElementById('user-withdraw-history');
                 histContainer.innerHTML = '';
                 const userWithdrawals = this.data.withdrawals.filter(w => w.userId === this.data.currentUser.id);
-                
                 if(userWithdrawals.length === 0) {
                     histContainer.innerHTML = '<p class="text-center text-sm text-gray-400 py-4">No transactions yet.</p>';
                     return;
                 }
-
                 userWithdrawals.slice().reverse().forEach(w => {
                     let badgeClass = '';
                     if(w.status === 'Processing') badgeClass = 'status-processing';
